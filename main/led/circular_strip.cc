@@ -47,6 +47,11 @@ CircularStrip::~CircularStrip() {
     }
 }
 
+void CircularStrip::Show() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    led_strip_refresh(led_strip_);
+}
+
 
 void CircularStrip::SetAllColor(StripColor color) {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -64,6 +69,13 @@ void CircularStrip::SetSingleColor(uint8_t index, StripColor color) {
     colors_[index] = color;
     led_strip_set_pixel(led_strip_, index, color.red, color.green, color.blue);
     led_strip_refresh(led_strip_);
+}
+
+void CircularStrip::SetIndexColor(uint8_t index, StripColor color) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    esp_timer_stop(strip_timer_);
+    colors_[index] = color;
+    led_strip_set_pixel(led_strip_, index, color.red, color.green, color.blue);
 }
 
 void CircularStrip::Blink(StripColor color, int interval_ms) {

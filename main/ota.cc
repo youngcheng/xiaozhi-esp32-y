@@ -176,6 +176,9 @@ bool Ota::CheckVersion() {
             }
         }
         has_websocket_config_ = true;
+
+        //add for test by ljw
+        //settings.SetString("url", "ws://192.168.18.132:8000/xiaozhi/v1/");
     } else {
         ESP_LOGI(TAG, "No websocket section found!");
     }

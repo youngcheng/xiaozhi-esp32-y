@@ -10,6 +10,7 @@
 #include "iot/thing_manager.h"
 #include "led/single_led.h"
 #include "assets/lang_config.h"
+#include "led/lamp_circular_strip.h"
 
 #include <wifi_station.h>
 #include <esp_log.h>
@@ -152,6 +153,18 @@ private:
         });
     }
 
+    void InitializeGpio(gpio_num_t gpio_num_) {
+        gpio_config_t config = {
+            .pin_bit_mask = (1ULL << gpio_num_),
+            .mode = GPIO_MODE_OUTPUT,
+            .pull_up_en = GPIO_PULLUP_DISABLE,
+            .pull_down_en = GPIO_PULLDOWN_DISABLE,
+            .intr_type = GPIO_INTR_DISABLE,
+        };
+        ESP_ERROR_CHECK(gpio_config(&config));
+        gpio_set_level(gpio_num_, 0);
+    }
+
     // 物联网初始化，逐步迁移到 MCP 协议
     void InitializeIot() {
 #if CONFIG_IOT_PROTOCOL_XIAOZHI
@@ -159,7 +172,11 @@ private:
         thing_manager.AddThing(iot::CreateThing("Speaker"));
         thing_manager.AddThing(iot::CreateThing("Lamp"));
 #elif CONFIG_IOT_PROTOCOL_MCP
-        static LampController lamp(LAMP_GPIO);
+        // static LampController lamp(LAMP_GPIO);
+
+        InitializeGpio(LAMP_GPIO);
+        static LampCircularStrip lamp_strip_(LAMP_GPIO, 12);
+        static LampController lamp(LAMP_GPIO, &lamp_strip_);
 #endif
     }
 
