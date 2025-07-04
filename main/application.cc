@@ -11,6 +11,7 @@
 #include "assets/lang_config.h"
 #include "mcp_server.h"
 #include "audio_debugger.h"
+#include "reminder/alarm.h"
 
 #if CONFIG_USE_AUDIO_PROCESSOR
 #include "afe_audio_processor.h"
@@ -715,6 +716,9 @@ void Application::Start() {
 
     // Print heap stats
     SystemInfo::PrintHeapStats();
+
+    // init alarm
+    alarm_init();
     
     // Enter the main event loop
     MainEventLoop();
@@ -743,6 +747,10 @@ void Application::OnClockTimer() {
                     Board::GetInstance().GetDisplay()->SetStatus(time_str);
                 });
             }
+
+            // alarm check
+            alarm_check_trigger();
+
         }
     }
 }
@@ -1114,6 +1122,14 @@ void Application::SendMcpMessage(const std::string& payload) {
     Schedule([this, payload]() {
         if (protocol_) {
             protocol_->SendMcpMessage(payload);
+        }
+    });
+}
+
+void Application::SendReminderMessage(const std::string& payload) {
+    Schedule([this, payload]() {
+        if (protocol_) {
+            protocol_->SendReminderMessage(payload);
         }
     });
 }

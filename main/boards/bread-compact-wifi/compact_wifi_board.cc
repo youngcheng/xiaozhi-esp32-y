@@ -11,6 +11,7 @@
 #include "led/single_led.h"
 #include "assets/lang_config.h"
 #include "led/lamp_circular_strip.h"
+#include "reminder/remind_controller.h"
 
 #include <wifi_station.h>
 #include <esp_log.h>
@@ -177,6 +178,7 @@ private:
         InitializeGpio(LAMP_GPIO);
         static LampCircularStrip lamp_strip_(LAMP_GPIO, 12);
         static LampController lamp(LAMP_GPIO, &lamp_strip_);
+        static RemindController remind_controller;
 #endif
     }
 
