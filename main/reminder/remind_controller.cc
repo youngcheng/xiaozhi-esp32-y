@@ -153,7 +153,7 @@ RemindController::RemindController() {
   // 删除提醒
   mcp_server.AddTool(
       "self.reminder.remove", "Remove a reminder by ID",
-      PropertyList({Property("id", kPropertyTypeInteger, 0, 0, MAX_ALARMS-1)}),
+      PropertyList({Property("id", kPropertyTypeInteger, 0)}),
       [this](const PropertyList &properties) -> ReturnValue {
         int id = properties["id"].value<int>();
         uint8_t count = alarm_get_count();
